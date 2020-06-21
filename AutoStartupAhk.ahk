@@ -4,7 +4,7 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.81
+NykyinenVersio = 0.82
 Sovelluskansio = AutoStartupAhk
 TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
 ;____________________________________________________________
@@ -488,6 +488,10 @@ IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
 			    Run, %A_ScriptFullPath%
 			    ExitApp
             }
+        }
+        else
+        {
+            MsgBox,, Ajan tasalla, Sinulla on jo uusin versio, 15
         }
     }
 }
