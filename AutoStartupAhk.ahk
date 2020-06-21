@@ -4,9 +4,9 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.8
+NykyinenVersio = 0.81
 Sovelluskansio = AutoStartupAhk
-TiedostoLatausLinkki = 
+TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[Gui]///////////////
