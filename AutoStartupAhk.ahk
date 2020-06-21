@@ -4,7 +4,7 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.84
+NykyinenVersio = 0.85
 Sovelluskansio = AutoStartupAhk
 TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
 ;____________________________________________________________
@@ -38,6 +38,8 @@ Loop, %A_AppData%\%Sovelluskansio%\Startup\*, 1, 0
 {
 	TName_List = %TName_List%%A_LoopFileName%|
 }
+IfExist, %A_AppData%\%Sovelluskansio%\AutoStartupAhk.ahk
+    FileDelete, %A_AppData%\%Sovelluskansio%\AutoStartupAhk.ahk
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[Startup]///////////////
@@ -108,7 +110,7 @@ Gui Add, Text, x328 y120 w68 h23 +0x200, Domain:
 Gui Font
 Gui Add, Edit, x407 y120 w144 h21 +ReadOnly
 Gui Font, s13
-Gui Add, Button, x560 y120 w80 h23, Muokkaa
+Gui Add, Button, x560 y120 w80 h23 +Disabled, Muokkaa
 Gui Font
 Gui Font, s13
 Gui Add, GroupBox, x318 y153 w339 h236, Tiedostot
@@ -342,6 +344,8 @@ FileAppend,
 (
 #NoEnv
 #SingleInstance Force
+IfNotExist, %A_AppData%\%Sovelluskansio%\AutoStart
+    FileCreateDir, %A_AppData%\%Sovelluskansio%\AutoStart
 IniWrite, 1,%A_AppData%\%Sovelluskansio%\AutoStart\AutoStart.ini,Settings,Startup
 sleep 200
 run, %A_ScriptFullPath%
@@ -430,6 +434,10 @@ Loop, %A_AppData%\%Sovelluskansio%\Startup\*, 1, 0
     }
 }
 FileDelete, %A_AppData%\%Sovelluskansio%\AutoStart\AutoStart.ini
+if ErrorLevel
+{
+    MsgBox,, AutoStartupAhk Error, "%A_AppData%\%Sovelluskansio%\AutoStart\AutoStart.ini" Tiedostoa ei voitu poistaa. Sovellus ei välttämättä toimi oikein ilman manuaalista poistamista
+}
 ExitApp
 ;____________________________________________________________
 ;____________________________________________________________
@@ -467,6 +475,3 @@ if(version != "")
     }
 }
 return
-UpdateFiles:
-;UrlDownloadToFile, *0 %url%, %A_WorkingDir%\%Filename%
-Return
