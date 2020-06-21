@@ -4,7 +4,7 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.85
+NykyinenVersio = 0.86
 Sovelluskansio = AutoStartupAhk
 TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
 ;____________________________________________________________
@@ -119,10 +119,10 @@ Gui Font, s13
 Gui Add, Text, x328 y184 w318 h69, Tiedostojen sijainti: %A_AppData%\ %Sovelluskansio%
 Gui Font
 Gui Font, s13
-Gui Add, Button, x432 y272 w117 h23 gavaakansio, Avaa kansio
+Gui Add, Button, x389 y256 w110 h22 gavaakansio, Avaa kansio
 Gui Font
 Gui Font, s13
-Gui Add, Button, x432 y304 w117 h25 gpoistakansio, Poista kansio
+Gui Add, Button, x512 y256 w110 h22 gpoistakansio, Poista kansio
 Gui Font
 Gui Font, s13
 Gui Add, GroupBox, x7 y325 w312 h64, Versio
@@ -132,14 +132,15 @@ Gui Add, Text, x16 y344 w298 h35 +0x200, Sovelluksen versio: %NykyinenVersio%
 Gui Font, s13
 Gui Add, Button, x15 y288 w192 h28 gTestaaAvausta, Testaa aloitus avausta
 Gui Font, s13
-Gui Add, CheckBox, x16 y248 w292 h29 gTarkistaPaivitys vcheckup +Disabled, Tarkista päivitykset käynnistyksessä
+Gui Add, CheckBox, x336 y304 w292 h29 gTarkistaPaivitys vcheckup, Tarkista päivitykset käynnistyksessä
 IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
 {
     IniRead, t_checkup, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Settings, Updates
     GuiControl,,checkup,%t_checkup%
 }
-Gui Font
-Gui Add, Button, x16 y208 w210 h36 gcheckForupdates, Tarkista päivitykset(väli aikainen koska version tarkistus ei toimi)
+Gui Font, s13
+Gui Add, Button, x352 y344 w210 h36 gcheckForupdates, Tarkista päivitykset
+Gui Add, GroupBox, x318 y279 w339 h110, Päivitykset
 
 Gui Show, w661 h394, AutoStartupAhk
 IfNotExist %A_AppData%\%Sovelluskansio%\Startup
