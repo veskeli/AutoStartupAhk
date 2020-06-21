@@ -470,9 +470,5 @@ if(version != "")
 			ExitApp
         }
     }
-    else
-    {
-        MsgBox,, Ajan tasalla, Sinulla on jo uusin versio, 15
-    }
 }
 return
