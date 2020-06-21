@@ -4,7 +4,7 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.82
+NykyinenVersio = 0.83
 Sovelluskansio = AutoStartupAhk
 TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
 ;____________________________________________________________
@@ -38,43 +38,6 @@ Loop, %A_AppData%\%Sovelluskansio%\Startup\*, 1, 0
 {
 	TName_List = %TName_List%%A_LoopFileName%|
 }
-;____________________________________________________________
-;____________________________________________________________
-;//////////////[Check for updates]///////////////
-/*
-checkForupdates:
-IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
-{
-    IniRead, t_checkup, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Settings, Updates
-    if(t_checkup == 1)
-    {
-        MsgBox, tarkistetaan päivityksiä
-        ; Example: Download text to a variable:
-        whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-        whr.Open("GET", "https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/Version.txt", False)
-        whr.Send()
-        ; Using 'true' above and the call below allows the script to remain responsive.
-        whr.WaitForResponse()
-        version := whr.ResponseText
-        ;vertaa versioita
-        if(version != "")
-        {
-            if(version != NykyinenVersio)
-            {
-                MsgBox, 1,Päivitys,uusi versio on %version% vanha on %NykyinenVersio%. Haluatko ladata uuden päivityksen,15
-                IfMsgBox, Cancel
-                {
-                    ;temp stuff
-                }
-                else
-                {
-
-                }
-            }
-        }
-    }
-}
-*/
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[Startup]///////////////
@@ -180,6 +143,16 @@ IfNotExist %A_AppData%\%Sovelluskansio%\Settings
     FileCreateDir, %A_AppData%\%Sovelluskansio%\Settings
 IfNotExist %A_AppData%\%Sovelluskansio%\AutoStart
     FileCreateDir %A_AppData%\%Sovelluskansio%\AutoStart
+;____________________________________________________________
+;//////////////[Check for updates]///////////////
+IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
+{
+    IniRead, t_checkup, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Settings, Updates
+    if(t_checkup == 1)
+    {
+        goto checkForupdates
+    }
+}
 Return
 ;____________________________________________________________
 ;____________________________________________________________
