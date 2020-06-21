@@ -4,7 +4,7 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.83
+NykyinenVersio = 0.84
 Sovelluskansio = AutoStartupAhk
 TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
 ;____________________________________________________________
@@ -131,8 +131,11 @@ Gui Font, s13
 Gui Add, Button, x15 y288 w192 h28 gTestaaAvausta, Testaa aloitus avausta
 Gui Font, s13
 Gui Add, CheckBox, x16 y248 w292 h29 gTarkistaPaivitys vcheckup +Disabled, Tarkista päivitykset käynnistyksessä
-IniRead, t_checkup, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Settings, Updates
-GuiControl,,checkup,%t_checkup%
+IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
+{
+    IniRead, t_checkup, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Settings, Updates
+    GuiControl,,checkup,%t_checkup%
+}
 Gui Font
 Gui Add, Button, x16 y208 w210 h36 gcheckForupdates, Tarkista päivitykset(väli aikainen koska version tarkistus ei toimi)
 
@@ -432,40 +435,35 @@ ExitApp
 ;____________________________________________________________
 ;//////////////[Update stuff]///////////////
 checkForupdates:
-IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
+whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+whr.Open("GET", "https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/Version.txt", False)
+whr.Send()
+whr.WaitForResponse()
+version := whr.ResponseText
+;vertaa versioita
+if(version != "")
 {
-    ; Example: Download text to a variable:
-    whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    whr.Open("GET", "https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/Version.txt", False)
-    whr.Send()
-    ; Using 'true' above and the call below allows the script to remain responsive.
-    whr.WaitForResponse()
-    version := whr.ResponseText
-    ;vertaa versioita
-    if(version != "")
+    if(version != NykyinenVersio)
     {
-        if(version != NykyinenVersio)
+        MsgBox, 1,Päivitys,uusi versio on %version% vanha on %NykyinenVersio%. Haluatko ladata uuden päivityksen,15
+        IfMsgBox, Cancel
         {
-            MsgBox, 1,Päivitys,uusi versio on %version% vanha on %NykyinenVersio%. Haluatko ladata uuden päivityksen,15
-            IfMsgBox, Cancel
-            {
-                ;temp stuff
-            }
-            else
-            {
-                ;lataa päivitys
-                FileMove, %A_ScriptFullPath%, %A_AppData%\%Sovelluskansio%\%A_ScriptName%, 1
-                sleep 1000
-                UrlDownloadToFile, %TiedostoLatausLinkki%, %A_ScriptFullPath%
-                Sleep 1000
-			    Run, %A_ScriptFullPath%
-			    ExitApp
-            }
+            ;temp stuff
         }
         else
         {
-            MsgBox,, Ajan tasalla, Sinulla on jo uusin versio, 15
+            ;lataa päivitys
+            FileMove, %A_ScriptFullPath%, %A_AppData%\%Sovelluskansio%\%A_ScriptName%, 1
+            sleep 1000
+            UrlDownloadToFile, %TiedostoLatausLinkki%, %A_ScriptFullPath%
+            Sleep 1000
+			Run, %A_ScriptFullPath%
+			ExitApp
         }
+    }
+    else
+    {
+        MsgBox,, Ajan tasalla, Sinulla on jo uusin versio, 15
     }
 }
 return
