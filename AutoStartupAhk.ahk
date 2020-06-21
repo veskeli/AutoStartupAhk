@@ -454,7 +454,7 @@ if(version != "")
 {
     if(version != NykyinenVersio)
     {
-        MsgBox, 1,Päivitys,uusi versio on %version% vanha on %NykyinenVersio%. Haluatko ladata uuden päivityksen,15
+        MsgBox, 1,Päivitys,Uusin versio on %version% `nvanha on %NykyinenVersio% `nHaluatko ladata uuden päivityksen
         IfMsgBox, Cancel
         {
             ;temp stuff
