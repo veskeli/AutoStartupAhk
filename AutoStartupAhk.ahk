@@ -163,7 +163,7 @@ Gui Font, s13
 Gui Add, GroupBox, x7 y325 w312 h64, Versio
 Gui Font
 Gui Font, s13
-Gui Add, Text, x16 y344 w298 h35 +0x200, Sovelluksen versio: %versio%
+Gui Add, Text, x16 y344 w298 h35 +0x200, Sovelluksen versio: %NykyinenVersio%
 Gui Font, s13
 Gui Add, Button, x15 y288 w192 h28 gTestaaAvausta, Testaa aloitus avausta
 Gui Font, s13
