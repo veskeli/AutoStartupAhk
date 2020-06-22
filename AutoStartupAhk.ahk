@@ -4,9 +4,10 @@
 ;____________________________________________________________
 ;//////////////[variables]///////////////
 SetWorkingDir %A_ScriptDir%
-NykyinenVersio = 0.86
+NykyinenVersio = 0.87
 Sovelluskansio = AutoStartupAhk
 TiedostoLatausLinkki = https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/AutoStartupAhk.ahk
+btn_pressed_update = 0
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[Gui]///////////////
@@ -33,6 +34,8 @@ IfExist, %A_AppData%\%Sovelluskansio%\AutoStart\AutoStart.ini
         goto StartupLoop2
     }
 }
+else
+{
 TName_List =
 Loop, %A_AppData%\%Sovelluskansio%\Startup\*, 1, 0
 {
@@ -75,7 +78,7 @@ Gui Font
 Gui Font, s13
 Gui Add, Text, x16 y288 w168 h43, Sovelluksen aloittamisen viive:(ms)
 Gui Font
-Gui Add, Edit, x192 y309 w120 h21 vviive
+Gui Add, Edit, x192 y309 w120 h21 vviive +Disabled
 Gui Font, s13
 Gui Add, CheckBox, x336 y303 w264 h24 vkäynnistys gKäynnistäSovellusToggle, Käynnistä Sovellus aloituksessa
 Gui Font
@@ -98,20 +101,30 @@ IfExist, %A_Startup%\Startup.ahk
 ;//////////////[Asetukset]///////////////
 Gui Add, GroupBox, x318 y24 w339 h141, Järjestelmänvalvojan tiedot (Salasana ei turvattu)
 Gui Font, s13
+;järjestelmänvalvojan nimi jne
 Gui Add, Text, x328 y56 w68 h23 +0x200, Nimi:
 Gui Font
-Gui Add, Edit, x408 y56 w209 h21 +ReadOnly
+Gui Add, Edit, x408 y56 w209 h21 vAdmin_Name
 Gui Font, s13
 Gui Add, Text, x328 y88 w79 h23 +0x200, Salasana:
 Gui Font
-Gui Add, Edit, x408 y88 w209 h21 +ReadOnly +Password
+Gui Add, Edit, x408 y88 w209 h21  +Password vAdmin_Password
 Gui Font, s13
 Gui Add, Text, x328 y120 w68 h23 +0x200, Domain:
 Gui Font
-Gui Add, Edit, x407 y120 w144 h21 +ReadOnly
+Gui Add, Edit, x407 y120 w144 h21 vAdmin_Domain
 Gui Font, s13
-Gui Add, Button, x560 y120 w80 h23 +Disabled, Muokkaa
+Gui Add, Button, x560 y120 w80 h23 gTallenna_Admin, Tallenna
 Gui Font
+IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
+{
+    IniRead, T_Admin_Name, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Nimi
+    IniRead, T_Admin_Password, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, salasana
+    IniRead, T_Admin_Domain, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Domain
+    GuiControl,,Admin_Name,%T_Admin_Name%
+    GuiControl,,Admin_Password,%T_Admin_Password%
+    GuiControl,,Admin_Domain,%T_Admin_Domain%
+}
 Gui Font, s13
 Gui Add, GroupBox, x318 y153 w339 h236, Tiedostot
 Gui Font
@@ -139,7 +152,7 @@ IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
     GuiControl,,checkup,%t_checkup%
 }
 Gui Font, s13
-Gui Add, Button, x352 y344 w210 h36 gcheckForupdates, Tarkista päivitykset
+Gui Add, Button, x352 y344 w210 h36 gcheckForupdatesbtn, Tarkista päivitykset
 Gui Add, GroupBox, x318 y279 w339 h110, Päivitykset
 
 Gui Show, w661 h394, AutoStartupAhk
@@ -160,6 +173,7 @@ IfExist, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini
     }
 }
 Return
+}
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[Escape]///////////////
@@ -260,6 +274,27 @@ TarkistaPaivitys:
 Gui, Submit, Nohide
 IniWrite, %checkup%, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Settings, Updates
 return
+Tallenna_Admin:
+Gui, Submit, Nohide
+if(Admin_Name == "" Or Admin_Password == "")
+{
+    MsgBox,4, Tyhjää, Nimi tai salasana tyhjää`n Haluatko Tyhjentää nimen ja salasanan 
+    IfMsgBox Yes
+    {
+        IniWrite, "", %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Nimi
+        IniWrite, "", %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, salasana
+        IniWrite, "", %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Domain
+        GuiControl,,Admin_Name,
+        GuiControl,,Admin_Password,
+        GuiControl,,Admin_Domain,
+    }
+    else
+        return
+}
+IniWrite, %Admin_Name%, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Nimi
+IniWrite, %Admin_Password%, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, salasana
+IniWrite, %Admin_Domain%, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Domain
+return
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[LisääUusiAloitusSovellus]///////////////
@@ -289,7 +324,7 @@ Gui Font
 Gui Font, s13
 Gui Add, Text, x16 y224 w274 h24, Sovelluksen aloittamisen viive:(ms)
 Gui Font
-Gui Add, Edit, x296 y224 w120 h21 vL_viive gSubmit
+Gui Add, Edit, x296 y224 w120 h21 vL_viive gSubmit +Disabled
 Gui Font, s13
 Gui Add, Text, x296 y248 w125 h23, (1000 ms = 1 s)
 Gui Font
@@ -356,6 +391,10 @@ ExitApp
 else
 {
     FileDelete, %A_Startup%\Startup.ahk
+    if(ErrorLevel)
+    {
+        MsgBox,,Error, Startup.ahk tiedostoa ei voitu poistaa., 10 
+    }
 }
 return
 StartupLoop:
@@ -395,7 +434,25 @@ Loop, %A_AppData%\%Sovelluskansio%\Startup\*, 1, 0
                 IniRead, T_kysy, %A_AppData%\%Sovelluskansio%\Startup\%A_LoopFileName%, Asetukset, Kysy_järjestelmänvalvojan salasanaa
                 if(T_kysy == 0)
                 {
-                    ;MsgBox, admin %A_LoopFileName%
+                    IniRead, T_Admin_Name, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Nimi
+                    IniRead, T_Admin_Password, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, salasana
+                    IniRead, T_Admin_Domain, %A_AppData%\%Sovelluskansio%\Settings\Settings.ini, Admin, Domain
+                    if(T_Admin_Domain == "")
+                    {
+                        RunAs, %T_Admin_Name%, %T_Admin_Password%,,UseErrorLevel
+                        if(ErrorLevel)
+                        {
+                            MsgBox,,Error, Admin nimi tai salasana on virheellinen, 15
+                        }
+                    }
+                    else
+                    {
+                        RunAs, %T_Admin_Name%, %T_Admin_Password%, %T_Admin_Domain%,UseErrorLevel
+                        if(ErrorLevel)
+                        {
+                            MsgBox,,Error, Admin nimi, salasana tai Domain on virheellinen, 15
+                        }
+                    }
                     IniRead, T_sovellus, %A_AppData%\%Sovelluskansio%\Startup\%A_LoopFileName%, Asetukset, Tiedoston_sijainti
                     run, %T_sovellus%
                 }
@@ -434,8 +491,9 @@ Loop, %A_AppData%\%Sovelluskansio%\Startup\*, 1, 0
         }
     }
 }
+RunAs
 FileDelete, %A_AppData%\%Sovelluskansio%\AutoStart\AutoStart.ini
-if ErrorLevel
+if(ErrorLevel)
 {
     MsgBox,, AutoStartupAhk Error, "%A_AppData%\%Sovelluskansio%\AutoStart\AutoStart.ini" Tiedostoa ei voitu poistaa. Sovellus ei välttämättä toimi oikein ilman manuaalista poistamista
 }
@@ -443,6 +501,8 @@ ExitApp
 ;____________________________________________________________
 ;____________________________________________________________
 ;//////////////[Update stuff]///////////////
+checkForupdatesbtn:
+btn_pressed_update = 1
 checkForupdates:
 whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
 whr.Open("GET", "https://raw.githubusercontent.com/veskeli/AutoStartupAhk/master/Version.txt", False)
@@ -470,5 +530,12 @@ if(version != "")
 			ExitApp
         }
     }
+    {
+        if(btn_pressed_update == 1)
+        {
+            MsgBox,,Kaikki kunnossa,Sinulla on jo uusin versio, 10
+        }
+    }
 }
+btn_pressed_update = 0
 return
