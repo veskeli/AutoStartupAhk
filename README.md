@@ -1,4 +1,4 @@
-# AutoStartupAhk
+# AutoStartupAhk (Ei täysin toiminnassa)
  
 !!! [Download AutoStartupAhk](https://github.com/veskeli/AutoStartupAhk/releases) !!!
 
